@@ -63,15 +63,21 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
-        title: const Text('미리보기'),
+        title: Text(
+          '미리보기',
+          style: theme.textTheme.titleLarge,
+        ),
         actions: [
           Semantics(
             label: '공유',
             button: true,
             child: IconButton(
-              icon: const Icon(Icons.share),
+              icon: Icon(Icons.share, color: theme.colorScheme.primary, size: 26),
               onPressed: _shareEpub,
               tooltip: '공유',
             ),
@@ -83,6 +89,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
   }
 
   Widget _buildBody() {
+    final theme = Theme.of(context);
+
     if (_isLoading) {
       return const Center(
         child: Column(
@@ -101,16 +109,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
-              size: 64,
-              color: Colors.red,
+              size: 72,
+              color: theme.colorScheme.error,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
               _error!,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
+              style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(height: 24),
             ElevatedButton(

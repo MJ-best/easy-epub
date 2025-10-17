@@ -5,6 +5,18 @@ part 'ebook_model.g.dart';
 /// Hive model for eBook storage
 @HiveType(typeId: 0)
 class EbookModel extends HiveObject {
+  EbookModel({
+    required this.id,
+    required this.title,
+    required this.author,
+    required this.content,
+    this.coverImagePath,
+    required this.templateType,
+    required this.createdAt,
+    required this.modifiedAt,
+    this.epubFilePath,
+  });
+
   @HiveField(0)
   String id;
 
@@ -31,48 +43,6 @@ class EbookModel extends HiveObject {
 
   @HiveField(8)
   String? epubFilePath;
-
-  EbookModel({
-    required this.id,
-    required this.title,
-    required this.author,
-    required this.content,
-    this.coverImagePath,
-    required this.templateType,
-    required this.createdAt,
-    required this.modifiedAt,
-    this.epubFilePath,
-  });
-
-  /// Convert to domain entity
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'author': author,
-      'content': content,
-      'coverImagePath': coverImagePath,
-      'templateType': templateType,
-      'createdAt': createdAt.toIso8601String(),
-      'modifiedAt': modifiedAt.toIso8601String(),
-      'epubFilePath': epubFilePath,
-    };
-  }
-
-  /// Create from JSON
-  factory EbookModel.fromJson(Map<String, dynamic> json) {
-    return EbookModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      author: json['author'] as String,
-      content: json['content'] as String,
-      coverImagePath: json['coverImagePath'] as String?,
-      templateType: json['templateType'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      modifiedAt: DateTime.parse(json['modifiedAt'] as String),
-      epubFilePath: json['epubFilePath'] as String?,
-    );
-  }
 
   /// Copy with method for immutability
   EbookModel copyWith({

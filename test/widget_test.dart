@@ -7,24 +7,54 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
-import 'package:easypub/main.dart';
+import 'package:easypub/domain/repositories/ebook_repository.dart';
+import 'package:easypub/presentation/home/home_screen.dart';
+import 'package:easypub/presentation/viewmodels/library_viewmodel.dart';
+import 'package:easypub/data/models/ebook_model.dart';
+
+class _FakeEbookRepository implements EbookRepository {
+  @override
+  Future<void> clearAll() async {}
+
+  @override
+  Future<void> deleteEbook(String id) async {}
+
+  @override
+  Future<List<EbookModel>> getAllEbooks() async => [];
+
+  @override
+  Future<EbookModel?> getEbookById(String id) async => null;
+
+  @override
+  Future<List<EbookModel>> searchEbooks(String query) async => [];
+
+  @override
+  Future<void> saveEbook(EbookModel ebook) async {}
+
+  @override
+  Future<void> updateEbook(EbookModel ebook) async {}
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Home screen shows empty state when no ebooks', (tester) async {
+    final repository = _FakeEbookRepository();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider<EbookRepository>.value(value: repository),
+          ChangeNotifierProvider(
+            create: (_) => LibraryViewModel(repository)..loadEbooks(),
+          ),
+        ],
+        child: const MaterialApp(home: HomeScreen()),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('전자책이 없습니다'), findsOneWidget);
   });
 }

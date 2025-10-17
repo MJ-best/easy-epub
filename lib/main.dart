@@ -72,7 +72,7 @@ class EasyPubApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(
-            title: AppConstants.APP_NAME,
+            title: AppConstants.appName,
             debugShowCheckedModeBanner: false,
 
             // Theme configuration

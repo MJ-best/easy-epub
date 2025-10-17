@@ -3,14 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Theme mode provider for managing dark/light mode
 class ThemeProvider extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
   static const String _themeModeKey = 'theme_mode';
-
-  ThemeMode get themeMode => _themeMode;
+  ThemeMode _themeMode = ThemeMode.system;
 
   ThemeProvider() {
     _loadThemeMode();
   }
+
+  ThemeMode get themeMode => _themeMode;
 
   /// Load saved theme mode from SharedPreferences
   Future<void> _loadThemeMode() async {

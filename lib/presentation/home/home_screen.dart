@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../../core/providers/theme_provider.dart';
 import '../viewmodels/library_viewmodel.dart';
 import '../create_book/create_book_screen.dart';
 import '../preview/preview_screen.dart';
-import '../../core/constants/app_constants.dart';
 
 /// Home screen displaying eBook library
 /// Stateless widget following MVVM pattern
@@ -13,46 +13,68 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
+        titleSpacing: 20,
         title: Text(
           'EasyPub',
-          style: TextStyle(
-            fontSize: 34,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
+          style: theme.textTheme.displaySmall?.copyWith(
+            color: theme.colorScheme.onSurface,
+            letterSpacing: -0.3,
           ),
         ),
-        toolbarHeight: 52,
         actions: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              final isDark = themeProvider.isDark(context);
+              return IconButton(
+                icon: Icon(
+                  isDark ? Icons.light_mode : Icons.dark_mode,
+                  color: theme.colorScheme.primary,
+                  size: 26,
+                ),
+                tooltip: isDark ? '라이트 모드' : '다크 모드',
+                onPressed: () => themeProvider.toggleTheme(),
+              );
+            },
+          ),
           IconButton(
-            icon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
+            icon: Icon(Icons.search, color: theme.colorScheme.primary, size: 26),
             tooltip: '검색',
             onPressed: () => _showSearchDialog(context),
           ),
+          const SizedBox(width: 12),
         ],
       ),
       body: Consumer<LibraryViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (viewModel.error != null) {
-            return Center(
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 16),
-                  Text(viewModel.error!),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => viewModel.loadEbooks(),
-                    child: const Text('다시 시도'),
+                  Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+                  const SizedBox(height: 20),
+                  Text(
+                    viewModel.error!,
+                    style: theme.textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: () => viewModel.loadEbooks(),
+                      child: const Text('다시 시도'),
+                    ),
                   ),
                 ],
               ),
@@ -60,29 +82,37 @@ class HomeScreen extends StatelessWidget {
           }
 
           if (!viewModel.hasEbooks) {
-            return Center(
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 42),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.book_outlined,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.secondary,
+                  Container(
+                    width: 88,
+                    height: 88,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Icon(
+                      Icons.book_outlined,
+                      size: 48,
+                      color: theme.colorScheme.secondary,
+                    ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   Text(
                     '전자책이 없습니다',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: theme.textTheme.titleLarge,
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
                     '새 전자책을 만들어보세요',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -92,9 +122,9 @@ class HomeScreen extends StatelessWidget {
           return RefreshIndicator(
             onRefresh: viewModel.refresh,
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               itemCount: viewModel.ebooks.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              separatorBuilder: (context, index) => const SizedBox(height: 14),
               itemBuilder: (context, index) {
                 final ebook = viewModel.ebooks[index];
                 return _EbookListItem(
@@ -118,8 +148,9 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 8, right: 8),
+        padding: const EdgeInsets.only(right: 16, bottom: 16),
         child: Semantics(
           label: '새 전자책 만들기',
           button: true,
@@ -135,7 +166,7 @@ class HomeScreen extends StatelessWidget {
                 context.read<LibraryViewModel>().loadEbooks();
               }
             },
-            child: const Icon(Icons.add, size: 28),
+            child: const Icon(Icons.add, size: 26),
           ),
         ),
       ),
@@ -147,13 +178,22 @@ class HomeScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         String query = '';
+        final theme = Theme.of(context);
         return AlertDialog(
-          title: const Text('전자책 검색'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+          contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
+          actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+          title: Text(
+            '전자책 검색',
+            style: theme.textTheme.titleLarge,
+          ),
           content: TextField(
             autofocus: true,
-            decoration: const InputDecoration(
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
               hintText: '제목 또는 저자명 입력',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
             ),
             onChanged: (value) => query = value,
             onSubmitted: (value) {
@@ -224,68 +264,73 @@ class _EbookListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final dateFormatter = DateFormat('yyyy.MM.dd');
+
+    final textScale = MediaQuery.textScalerOf(context).textScaleFactor.clamp(1.0, 1.3);
 
     return Semantics(
       label: '$title, 저자: $author',
       button: true,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(10),
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(18),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(
+                horizontal: 22,
+                vertical: 18 * textScale,
+              ),
               child: Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 56,
+                    height: 76,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(8),
+                      color: theme.colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
-                      Icons.book,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 24,
+                      Icons.menu_book,
+                      color: theme.colorScheme.primary,
+                      size: 30,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           title,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                          style: theme.textTheme.titleMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 8),
                         Text(
                           '$author · ${dateFormatter.format(modifiedDate)}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                          maxLines: 1,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.secondary,
+                          ),
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
                   IconButton(
+                    iconSize: 26,
+                    visualDensity: VisualDensity.compact,
                     icon: Icon(
                       Icons.delete_outline,
-                      color: Theme.of(context).colorScheme.error,
+                      color: theme.colorScheme.error,
                     ),
                     onPressed: onDelete,
                     tooltip: '삭제',

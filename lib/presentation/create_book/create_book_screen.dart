@@ -12,21 +12,20 @@ class CreateBookScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => context.read<CreateBookViewModel>(),
+    final theme = Theme.of(context);
+    final createBookViewModel = context.read<CreateBookViewModel>();
+
+    return ChangeNotifierProvider<CreateBookViewModel>.value(
+      value: createBookViewModel,
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: theme.colorScheme.surface,
         appBar: AppBar(
           title: Text(
             '새 전자책',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+            style: theme.textTheme.titleLarge,
           ),
           leading: IconButton(
-            icon: Icon(Icons.close, color: Theme.of(context).colorScheme.primary),
+            icon: Icon(Icons.close, color: theme.colorScheme.primary, size: 26),
             onPressed: () => Navigator.pop(context),
             tooltip: '닫기',
           ),
@@ -42,6 +41,7 @@ class _CreateBookForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Consumer<CreateBookViewModel>(
       builder: (context, viewModel, child) {
         return OrientationBuilder(
@@ -49,16 +49,23 @@ class _CreateBookForm extends StatelessWidget {
             final isLandscape = orientation == Orientation.landscape;
 
             if (isLandscape) {
-              // Landscape: Split screen
-              return Row(
+              // Landscape: Split screen with bottom button
+              return Column(
                 children: [
                   Expanded(
-                    child: _EditorPanel(viewModel: viewModel),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _EditorPanel(viewModel: viewModel),
+                        ),
+                        const VerticalDivider(width: 1, thickness: 1),
+                        Expanded(
+                          child: _PreviewPanel(viewModel: viewModel),
+                        ),
+                      ],
+                    ),
                   ),
-                  const VerticalDivider(width: 1, thickness: 1),
-                  Expanded(
-                    child: _PreviewPanel(viewModel: viewModel),
-                  ),
+                  _BottomButton(viewModel: viewModel),
                 ],
               );
             } else {
@@ -69,14 +76,14 @@ class _CreateBookForm extends StatelessWidget {
                     child: _EditorPanel(viewModel: viewModel),
                   ),
                   if (viewModel.content.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       child: OutlinedButton.icon(
                         onPressed: () => _showPreviewDialog(context, viewModel),
-                        icon: const Icon(Icons.visibility),
-                        label: const Text('미리보기'),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        icon: Icon(Icons.visibility_outlined, color: theme.colorScheme.primary),
+                        label: Text(
+                          '미리보기',
+                          style: theme.textTheme.labelLarge,
                         ),
                       ),
                     ),
@@ -91,6 +98,7 @@ class _CreateBookForm extends StatelessWidget {
   }
 
   void _showPreviewDialog(BuildContext context, CreateBookViewModel viewModel) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -100,13 +108,13 @@ class _CreateBookForm extends StatelessWidget {
           child: Column(
             children: [
               AppBar(
-                title: const Text('미리보기'),
+                title: Text('미리보기', style: theme.textTheme.titleLarge),
                 leading: IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.pop(context),
                 ),
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                foregroundColor: Theme.of(context).colorScheme.onSurface,
+                backgroundColor: theme.colorScheme.surface,
+                foregroundColor: theme.colorScheme.onSurface,
               ),
               Expanded(
                 child: _PreviewPanel(viewModel: viewModel),
@@ -126,21 +134,23 @@ class _EditorPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(10),
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
                   child: TextField(
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: '제목',
                       hintText: '전자책 제목',
@@ -151,10 +161,11 @@ class _EditorPanel extends StatelessWidget {
                     maxLength: 100,
                   ),
                 ),
-                const Divider(height: 1, indent: 16, endIndent: 16),
+                const Divider(height: 1, indent: 20, endIndent: 20),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
                   child: TextField(
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: '저자',
                       hintText: '저자명 (선택사항)',
@@ -171,42 +182,57 @@ class _EditorPanel extends StatelessWidget {
           const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(10),
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(18),
             ),
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: '본문',
-                hintText: '마크다운으로 작성하세요\n\n# 제목\n## 부제목\n본문 내용...',
-                alignLabelWithHint: true,
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
-              ),
-              onChanged: viewModel.setContent,
-              maxLines: 15,
-              keyboardType: TextInputType.multiline,
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '본문',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.secondary,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 220),
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      labelText: '본문',
+                      hintText: '마크다운으로 작성하세요\n\n# 제목\n## 부제목\n본문 내용...',
+                      alignLabelWithHint: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    ),
+                    onChanged: viewModel.setContent,
+                    maxLines: null,
+                    minLines: 12,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
           Text(
             '템플릿',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.secondary,
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.secondary,
+              letterSpacing: 0.1,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           _TemplateSelector(viewModel: viewModel),
           const SizedBox(height: 24),
           if (viewModel.error != null)
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 12),
               child: Text(
                 _getErrorMessage(viewModel.error!, context),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                  fontSize: 14,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.error,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -237,6 +263,9 @@ class _PreviewPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final surfaceColor = theme.colorScheme.surface;
+
     if (viewModel.content.isEmpty) {
       return Center(
         child: Column(
@@ -244,23 +273,23 @@ class _PreviewPanel extends StatelessWidget {
           children: [
             Icon(
               Icons.visibility_outlined,
-              size: 48,
-              color: Theme.of(context).colorScheme.secondary,
+              size: 52,
+              color: theme.colorScheme.secondary,
             ),
             const SizedBox(height: 16),
             Text(
               '실시간 미리보기',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.secondary,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               '본문 내용을 입력하면\n여기에 표시됩니다',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.secondary,
+              ),
             ),
           ],
         ),
@@ -270,95 +299,91 @@ class _PreviewPanel extends StatelessWidget {
     final html = MarkdownParser.parseToHtml(viewModel.content);
 
     return Container(
-      color: Theme.of(context).colorScheme.surface,
+      color: surfaceColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: surfaceColor,
               border: Border(
                 bottom: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                  width: 0.5,
+                  color: theme.colorScheme.outlineVariant,
+                  width: 0.6,
                 ),
               ),
             ),
             child: Row(
               children: [
-                Icon(Icons.visibility, size: 20, color: Theme.of(context).colorScheme.secondary),
-                const SizedBox(width: 8),
+                Icon(Icons.visibility, size: 22, color: theme.colorScheme.secondary),
+                const SizedBox(width: 12),
                 Text(
                   '미리보기',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                  style: theme.textTheme.titleSmall,
                 ),
               ],
             ),
           ),
           Expanded(
             child: Container(
-              color: Colors.white,
+              color: theme.brightness == Brightness.dark ? const Color(0xFF111111) : Colors.white,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
                 child: Html(
                   data: html,
                   style: {
                     "body": Style(
-                      fontFamily: 'Noto Serif KR',
-                      fontSize: FontSize(16),
-                      lineHeight: const LineHeight(1.8),
-                      color: Colors.black,
+                      fontFamily: 'Noto Sans KR',
+                      fontSize: FontSize(18),
+                      lineHeight: const LineHeight(1.7),
+                      color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                       textAlign: TextAlign.justify,
                       margin: Margins.zero,
                       padding: HtmlPaddings.zero,
                     ),
                     "h1": Style(
-                      fontSize: FontSize(24),
+                      fontSize: FontSize(28),
                       fontWeight: FontWeight.bold,
-                      lineHeight: const LineHeight(1.5),
-                      margin: Margins(top: Margin(32), bottom: Margin(16)),
-                      color: Colors.black,
+                      lineHeight: const LineHeight(1.4),
+                      margin: Margins(top: Margin(36), bottom: Margin(18)),
+                      color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                     ),
                     "h2": Style(
-                      fontSize: FontSize(20),
+                      fontSize: FontSize(24),
                       fontWeight: FontWeight.bold,
-                      lineHeight: const LineHeight(1.5),
-                      margin: Margins(top: Margin(24), bottom: Margin(12)),
-                      color: Colors.black,
+                      lineHeight: const LineHeight(1.4),
+                      margin: Margins(top: Margin(30), bottom: Margin(14)),
+                      color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                     ),
                     "h3": Style(
-                      fontSize: FontSize(17),
+                      fontSize: FontSize(20),
                       fontWeight: FontWeight.bold,
-                      lineHeight: const LineHeight(1.5),
-                      margin: Margins(top: Margin(20), bottom: Margin(10)),
-                      color: Colors.black,
+                      lineHeight: const LineHeight(1.4),
+                      margin: Margins(top: Margin(24), bottom: Margin(12)),
+                      color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                     ),
                     "p": Style(
-                      fontSize: FontSize(16),
-                      lineHeight: const LineHeight(1.8),
+                      fontSize: FontSize(18),
+                      lineHeight: const LineHeight(1.7),
                       margin: Margins(bottom: Margin(16)),
                       textAlign: TextAlign.justify,
-                      color: Colors.black,
+                      color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                     ),
                     "ul": Style(
-                      fontSize: FontSize(16),
-                      lineHeight: const LineHeight(1.8),
-                      margin: Margins(top: Margin(8), bottom: Margin(8)),
+                      fontSize: FontSize(18),
+                      lineHeight: const LineHeight(1.7),
+                      margin: Margins(top: Margin(10), bottom: Margin(10)),
                       padding: HtmlPaddings(left: HtmlPadding(32)),
                     ),
                     "ol": Style(
-                      fontSize: FontSize(16),
-                      lineHeight: const LineHeight(1.8),
-                      margin: Margins(top: Margin(8), bottom: Margin(8)),
+                      fontSize: FontSize(18),
+                      lineHeight: const LineHeight(1.7),
+                      margin: Margins(top: Margin(10), bottom: Margin(10)),
                       padding: HtmlPaddings(left: HtmlPadding(32)),
                     ),
                     "li": Style(
-                      margin: Margins(bottom: Margin(6)),
+                      margin: Margins(bottom: Margin(8)),
                     ),
                     "strong": Style(
                       fontWeight: FontWeight.bold,
@@ -367,13 +392,14 @@ class _PreviewPanel extends StatelessWidget {
                       fontStyle: FontStyle.italic,
                     ),
                     "code": Style(
-                      fontFamily: 'Courier New',
-                      fontSize: FontSize(15),
-                      backgroundColor: const Color(0xFFF5F5F5),
-                      padding: HtmlPaddings.all(4),
+                      fontFamily: 'Roboto Mono',
+                      fontSize: FontSize(16),
+                      backgroundColor:
+                          theme.brightness == Brightness.dark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F5F5),
+                      padding: HtmlPaddings.all(6),
                     ),
                     "a": Style(
-                      color: const Color(0xFF0066CC),
+                      color: theme.colorScheme.primary,
                       textDecoration: TextDecoration.none,
                     ),
                   },
@@ -394,15 +420,13 @@ class _BottomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: theme.colorScheme.surface,
         border: Border(
-          top: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
-            width: 0.5,
-          ),
+          top: BorderSide(color: theme.colorScheme.outlineVariant, width: 0.6),
         ),
       ),
       child: SafeArea(
@@ -415,15 +439,14 @@ class _BottomButton extends StatelessWidget {
                 : () => _handleGenerate(context, viewModel),
             child: viewModel.isGenerating
                 ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2.4),
                   )
-                : const Text(
+                : Text(
                     '전자책 생성',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: theme.colorScheme.onPrimary,
                     ),
                   ),
           ),
@@ -454,10 +477,11 @@ class _TemplateSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         children: TemplateType.values.asMap().entries.map((entry) {
@@ -473,44 +497,77 @@ class _TemplateSelector extends StatelessWidget {
                 child: InkWell(
                   onTap: () => viewModel.selectTemplate(template),
                   borderRadius: BorderRadius.vertical(
-                    top: index == 0 ? const Radius.circular(10) : Radius.zero,
-                    bottom: isLast ? const Radius.circular(10) : Radius.zero,
+                    top: index == 0 ? const Radius.circular(18) : Radius.zero,
+                    bottom: isLast ? const Radius.circular(18) : Radius.zero,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     child: Row(
                       children: [
-                        Icon(
-                          _getTemplateIcon(template),
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.secondary,
-                          size: 24,
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? theme.colorScheme.primaryContainer
+                                : theme.colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(
+                            _getTemplateIcon(template),
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.secondary,
+                            size: 24,
+                          ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         Expanded(
-                          child: Text(
-                            template.displayName,
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                template.displayName,
+                                style: theme.textTheme.titleSmall,
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                template.description,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: 22,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                            borderRadius: BorderRadius.circular(11),
+                            border: Border.all(
+                              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.outlineVariant,
+                              width: 1.2,
                             ),
                           ),
+                          child: isSelected
+                              ? Icon(Icons.check, size: 16, color: theme.colorScheme.onPrimary)
+                              : null,
                         ),
-                        if (isSelected)
-                          Icon(
-                            Icons.check,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 22,
-                          ),
                       ],
                     ),
                   ),
                 ),
               ),
               if (!isLast)
-                const Divider(height: 1, indent: 52, endIndent: 16),
+                Divider(
+                  height: 1,
+                  indent: 20,
+                  endIndent: 20,
+                  color: theme.colorScheme.outlineVariant,
+                ),
             ],
           );
         }).toList(),

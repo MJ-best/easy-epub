@@ -9,7 +9,7 @@ class EbookRepositoryImpl implements EbookRepository {
 
   /// Initialize Hive box
   Future<void> init() async {
-    _ebookBox = await Hive.openBox<EbookModel>(AppConstants.EBOOK_BOX_NAME);
+    _ebookBox = await Hive.openBox<EbookModel>(AppConstants.ebookBoxName);
   }
 
   @override

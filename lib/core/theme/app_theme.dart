@@ -1,207 +1,179 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// App theme configuration following Material 3 design
 class AppTheme {
   AppTheme._();
 
+  static const List<String> _fontFamilyFallback = [
+    'Noto Sans KR',
+    'Apple SD Gothic Neo',
+    'Malgun Gothic',
+    'Roboto',
+    'Segoe UI',
+    'Helvetica Neue',
+    'Arial',
+    'sans-serif',
+  ];
+
   // Color Schemes - Minimalist iPhone-style colors
-  static const ColorScheme _lightColorScheme = ColorScheme(
+  static final ColorScheme _lightColorScheme = ColorScheme.fromSeed(
     brightness: Brightness.light,
-    primary: Color(0xFF007AFF), // iOS blue
-    onPrimary: Color(0xFFFFFFFF),
-    primaryContainer: Color(0xFFE3F2FD),
-    onPrimaryContainer: Color(0xFF001A33),
-    secondary: Color(0xFF8E8E93), // iOS gray
-    onSecondary: Color(0xFFFFFFFF),
-    secondaryContainer: Color(0xFFF2F2F7),
-    onSecondaryContainer: Color(0xFF1C1C1E),
-    tertiary: Color(0xFF5AC8FA), // iOS light blue
-    onTertiary: Color(0xFFFFFFFF),
-    tertiaryContainer: Color(0xFFE0F7FA),
-    onTertiaryContainer: Color(0xFF001A1F),
-    error: Color(0xFFFF3B30), // iOS red
-    onError: Color(0xFFFFFFFF),
-    errorContainer: Color(0xFFFFEBEE),
-    onErrorContainer: Color(0xFF330000),
-    background: Color(0xFFF2F2F7), // iOS background
-    onBackground: Color(0xFF000000),
-    surface: Color(0xFFFFFFFF),
-    onSurface: Color(0xFF000000),
-    surfaceVariant: Color(0xFFF2F2F7),
-    onSurfaceVariant: Color(0xFF48484A),
-    outline: Color(0xFFC6C6C8),
-    outlineVariant: Color(0xFFE5E5EA),
-    shadow: Color(0xFF000000),
-    scrim: Color(0xFF000000),
-    inverseSurface: Color(0xFF1C1C1E),
-    onInverseSurface: Color(0xFFFFFFFF),
-    inversePrimary: Color(0xFF0A84FF),
+    seedColor: const Color(0xFF007AFF),
+    surface: const Color(0xFFFFFFFF),
+    onSurface: const Color(0xFF1C1C1E),
+    secondary: const Color(0xFF8E8E93),
+    tertiary: const Color(0xFF5AC8FA),
+    error: const Color(0xFFFF3B30),
   );
 
-  static const ColorScheme _darkColorScheme = ColorScheme(
+  static final ColorScheme _darkColorScheme = ColorScheme.fromSeed(
     brightness: Brightness.dark,
-    primary: Color(0xFF0A84FF), // iOS blue dark mode
-    onPrimary: Color(0xFFFFFFFF),
-    primaryContainer: Color(0xFF004080),
-    onPrimaryContainer: Color(0xFFD0E8FF),
-    secondary: Color(0xFF8E8E93), // iOS gray dark
-    onSecondary: Color(0xFF1C1C1E),
-    secondaryContainer: Color(0xFF2C2C2E),
-    onSecondaryContainer: Color(0xFFE5E5EA),
-    tertiary: Color(0xFF64D2FF), // iOS light blue dark
-    onTertiary: Color(0xFF1C1C1E),
-    tertiaryContainer: Color(0xFF003D4A),
-    onTertiaryContainer: Color(0xFFB3E5FC),
-    error: Color(0xFFFF453A), // iOS red dark mode
-    onError: Color(0xFFFFFFFF),
-    errorContainer: Color(0xFF660000),
-    onErrorContainer: Color(0xFFFFCDD2),
-    background: Color(0xFF000000), // iOS dark background
-    onBackground: Color(0xFFFFFFFF),
-    surface: Color(0xFF1C1C1E),
-    onSurface: Color(0xFFFFFFFF),
-    surfaceVariant: Color(0xFF2C2C2E),
-    onSurfaceVariant: Color(0xFFAEAEB2),
-    outline: Color(0xFF48484A),
-    outlineVariant: Color(0xFF38383A),
-    shadow: Color(0xFF000000),
-    scrim: Color(0xFF000000),
-    inverseSurface: Color(0xFFFFFFFF),
-    onInverseSurface: Color(0xFF000000),
-    inversePrimary: Color(0xFF007AFF),
+    seedColor: const Color(0xFF0A84FF),
+    surface: const Color(0xFF1C1C1E),
+    onSurface: const Color(0xFFE5E5EA),
+    secondary: const Color(0xFF8E8E93),
+    tertiary: const Color(0xFF64D2FF),
+    error: const Color(0xFFFF453A),
   );
 
   /// Light theme configuration - Minimalist iPhone style
-  static ThemeData get lightTheme {
+  static ThemeData get lightTheme => _createTheme(_lightColorScheme);
+
+  /// Dark theme configuration - Minimalist iPhone style
+  static ThemeData get darkTheme => _createTheme(_darkColorScheme);
+
+  static ThemeData _createTheme(ColorScheme scheme) {
+    final textTheme = _buildTextTheme(scheme);
+
     return ThemeData(
       useMaterial3: true,
-      colorScheme: _lightColorScheme,
+      colorScheme: scheme,
+      textTheme: textTheme,
+      typography: Typography.material2021(),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      scaffoldBackgroundColor: scheme.surface,
       appBarTheme: AppBarTheme(
         centerTitle: false,
         elevation: 0,
-        backgroundColor: _lightColorScheme.surface,
-        foregroundColor: _lightColorScheme.onSurface,
+        backgroundColor: scheme.surface,
+        foregroundColor: scheme.onSurface,
         scrolledUnderElevation: 0,
+        systemOverlayStyle:
+            scheme.brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        titleTextStyle: textTheme.headlineSmall,
+        toolbarHeight: 64,
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: _lightColorScheme.surface,
+        color: scheme.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
         margin: EdgeInsets.zero,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(88, 50),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          minimumSize: const Size.fromHeight(52),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           elevation: 0,
+          textStyle: textTheme.labelLarge,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
           ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(48),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          textStyle: textTheme.labelLarge,
+          side: BorderSide(color: scheme.outlineVariant),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: scheme.primary,
+          textStyle: textTheme.labelLarge,
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 0,
-        backgroundColor: _lightColorScheme.primary,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: _lightColorScheme.surfaceVariant,
+        fillColor: scheme.surfaceContainerHighest,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: _lightColorScheme.primary,
-            width: 1,
-          ),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: scheme.primary, width: 1.2),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        hintStyle: textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+        labelStyle: textTheme.bodyMedium,
       ),
       dividerTheme: DividerThemeData(
-        color: _lightColorScheme.outlineVariant,
-        thickness: 0.5,
+        color: scheme.outlineVariant,
+        thickness: 0.6,
+      ),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: scheme.surface,
+        elevation: 0,
+      ),
+      listTileTheme: ListTileThemeData(
+        dense: false,
+        horizontalTitleGap: 12,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        iconColor: scheme.secondary,
+        textColor: scheme.onSurface,
+        visualDensity: VisualDensity.compact,
       ),
     );
   }
 
-  /// Dark theme configuration - Minimalist iPhone style
-  static ThemeData get darkTheme {
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: _darkColorScheme,
-      appBarTheme: AppBarTheme(
-        centerTitle: false,
-        elevation: 0,
-        backgroundColor: _darkColorScheme.surface,
-        foregroundColor: _darkColorScheme.onSurface,
-        scrolledUnderElevation: 0,
-      ),
-      cardTheme: CardThemeData(
-        elevation: 0,
-        color: _darkColorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: EdgeInsets.zero,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(88, 50),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        elevation: 0,
-        backgroundColor: _darkColorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: _darkColorScheme.surfaceVariant,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: _darkColorScheme.primary,
-            width: 1,
-          ),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-      ),
-      dividerTheme: DividerThemeData(
-        color: _darkColorScheme.outlineVariant,
-        thickness: 0.5,
-      ),
+  static TextTheme _buildTextTheme(ColorScheme scheme) {
+    final baseTypography = scheme.brightness == Brightness.dark
+        ? Typography.material2021(platform: TargetPlatform.iOS).white
+        : Typography.material2021(platform: TargetPlatform.iOS).black;
+
+    final textTheme = baseTypography.copyWith(
+      displayLarge: baseTypography.displayLarge?.copyWith(fontSize: 42, fontWeight: FontWeight.w700),
+      displayMedium: baseTypography.displayMedium?.copyWith(fontSize: 38, fontWeight: FontWeight.w700),
+      displaySmall: baseTypography.displaySmall?.copyWith(fontSize: 32, fontWeight: FontWeight.w700),
+      headlineLarge: baseTypography.headlineLarge?.copyWith(fontSize: 30, fontWeight: FontWeight.w700),
+      headlineMedium: baseTypography.headlineMedium?.copyWith(fontSize: 26, fontWeight: FontWeight.w700),
+      headlineSmall: baseTypography.headlineSmall?.copyWith(fontSize: 22, fontWeight: FontWeight.w600),
+      titleLarge: baseTypography.titleLarge?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
+      titleMedium: baseTypography.titleMedium?.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
+      titleSmall: baseTypography.titleSmall?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+      bodyLarge: baseTypography.bodyLarge?.copyWith(fontSize: 16, height: 1.6),
+      bodyMedium: baseTypography.bodyMedium?.copyWith(fontSize: 15, height: 1.6),
+      bodySmall: baseTypography.bodySmall?.copyWith(fontSize: 13, height: 1.5),
+      labelLarge: baseTypography.labelLarge?.copyWith(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 0.1),
+      labelMedium: baseTypography.labelMedium?.copyWith(fontSize: 13, fontWeight: FontWeight.w600),
+      labelSmall: baseTypography.labelSmall?.copyWith(fontSize: 11, fontWeight: FontWeight.w500),
+    );
+
+    return textTheme.apply(
+      bodyColor: scheme.onSurface,
+      displayColor: scheme.onSurface,
+      fontFamilyFallback: _fontFamilyFallback,
     );
   }
 }

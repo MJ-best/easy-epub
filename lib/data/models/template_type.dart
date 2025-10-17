@@ -16,6 +16,18 @@ enum TemplateType {
     }
   }
 
+  /// Human-readable description for UI preview
+  String get description {
+    switch (this) {
+      case TemplateType.novel:
+        return '세리프 서체와 여백을 강조한 전통적인 독서 경험';
+      case TemplateType.essay:
+        return '가독성 높은 산세리프 서체와 균형 잡힌 문단 구성';
+      case TemplateType.manual:
+        return '정보 전달을 위한 구조화된 제목과 리스트 스타일';
+    }
+  }
+
   /// Get CSS styles for template
   String get cssStyle {
     switch (this) {

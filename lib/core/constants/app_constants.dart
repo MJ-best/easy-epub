@@ -3,27 +3,27 @@ class AppConstants {
   AppConstants._();
 
   // App Info
-  static const String APP_NAME = 'EasyPub';
-  static const String APP_VERSION = '1.0.0';
+  static const String appName = 'EasyPub';
+  static const String appVersion = '1.0.0';
 
   // Database
-  static const String EBOOK_BOX_NAME = 'ebooks';
-  static const String SETTINGS_BOX_NAME = 'settings';
+  static const String ebookBoxName = 'ebooks';
+  static const String settingsBoxName = 'settings';
 
   // UI Constants
-  static const double MIN_TOUCH_TARGET_SIZE = 44.0;
-  static const double DEFAULT_PADDING = 16.0;
-  static const double CARD_BORDER_RADIUS = 12.0;
-  static const double THUMBNAIL_WIDTH = 120.0;
-  static const double THUMBNAIL_HEIGHT = 180.0;
+  static const double minTouchTargetSize = 44.0;
+  static const double defaultPadding = 16.0;
+  static const double cardBorderRadius = 12.0;
+  static const double thumbnailWidth = 120.0;
+  static const double thumbnailHeight = 180.0;
 
   // EPUB Generation
-  static const String DEFAULT_LANGUAGE = 'ko';
-  static const String DEFAULT_PUBLISHER = 'EasyPub';
+  static const String defaultLanguage = 'ko';
+  static const String defaultPublisher = 'EasyPub';
 
   // File Extensions
-  static const String EPUB_EXTENSION = '.epub';
+  static const String epubExtension = '.epub';
 
   // Date Format
-  static const String DATE_FORMAT = 'yyyy-MM-dd HH:mm';
+  static const String dateFormat = 'yyyy-MM-dd HH:mm';
 }

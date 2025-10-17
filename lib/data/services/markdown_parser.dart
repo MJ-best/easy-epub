@@ -7,6 +7,7 @@ class MarkdownParser {
 
     bool inParagraph = false;
     bool inList = false;
+    String? currentListTag;
 
     for (var i = 0; i < lines.length; i++) {
       final line = lines[i];
@@ -19,11 +20,21 @@ class MarkdownParser {
           inParagraph = false;
         }
         if (inList) {
-          buffer.writeln('</ul>');
+          buffer.writeln('</$currentListTag>');
           inList = false;
+          currentListTag = null;
         }
         buffer.writeln('<p class="txt bl"><br/></p>');
         continue;
+      }
+
+      // Close list if switching contexts
+      void closeListIfNeeded() {
+        if (inList) {
+          buffer.writeln('</$currentListTag>');
+          inList = false;
+          currentListTag = null;
+        }
       }
 
       // Heading level 1
@@ -32,6 +43,7 @@ class MarkdownParser {
           buffer.writeln('</p>');
           inParagraph = false;
         }
+        closeListIfNeeded();
         buffer.writeln('<h1 class="h1">${_escapeHtml(trimmed.substring(2))}</h1>');
         continue;
       }
@@ -42,6 +54,7 @@ class MarkdownParser {
           buffer.writeln('</p>');
           inParagraph = false;
         }
+        closeListIfNeeded();
         buffer.writeln('<h2 class="h2">${_escapeHtml(trimmed.substring(3))}</h2>');
         continue;
       }
@@ -52,6 +65,7 @@ class MarkdownParser {
           buffer.writeln('</p>');
           inParagraph = false;
         }
+        closeListIfNeeded();
         buffer.writeln('<h3 class="h3">${_escapeHtml(trimmed.substring(4))}</h3>');
         continue;
       }
@@ -62,9 +76,13 @@ class MarkdownParser {
           buffer.writeln('</p>');
           inParagraph = false;
         }
-        if (!inList) {
+        if (!inList || currentListTag != 'ul') {
+          if (inList) {
+            buffer.writeln('</$currentListTag>');
+          }
           buffer.writeln('<ul class="list">');
           inList = true;
+          currentListTag = 'ul';
         }
         buffer.writeln('<li>${_processInlineMarkdown(trimmed.substring(2))}</li>');
         continue;
@@ -76,9 +94,13 @@ class MarkdownParser {
           buffer.writeln('</p>');
           inParagraph = false;
         }
-        if (!inList) {
+        if (!inList || currentListTag != 'ol') {
+          if (inList) {
+            buffer.writeln('</$currentListTag>');
+          }
           buffer.writeln('<ol class="list">');
           inList = true;
+          currentListTag = 'ol';
         }
         final content = trimmed.replaceFirst(RegExp(r'^\d+\.\s'), '');
         buffer.writeln('<li>${_processInlineMarkdown(content)}</li>');
@@ -87,8 +109,9 @@ class MarkdownParser {
 
       // Regular paragraph
       if (inList) {
-        buffer.writeln('</ul>');
+        buffer.writeln('</$currentListTag>');
         inList = false;
+        currentListTag = null;
       }
 
       if (!inParagraph) {
@@ -113,7 +136,7 @@ class MarkdownParser {
       buffer.writeln('</p>');
     }
     if (inList) {
-      buffer.writeln('</ul>');
+      buffer.writeln('</$currentListTag>');
     }
 
     return buffer.toString();
@@ -121,41 +144,41 @@ class MarkdownParser {
 
   /// Process inline markdown (bold, italic, links)
   static String _processInlineMarkdown(String text) {
-    String result = text;
+    String result = _escapeHtml(text);
 
     // Bold (**text** or __text__)
     result = result.replaceAllMapped(
       RegExp(r'\*\*(.+?)\*\*'),
-      (match) => '<strong>${_escapeHtml(match.group(1)!)}</strong>',
+      (match) => '<strong>${match.group(1)}</strong>',
     );
     result = result.replaceAllMapped(
       RegExp(r'__(.+?)__'),
-      (match) => '<strong>${_escapeHtml(match.group(1)!)}</strong>',
+      (match) => '<strong>${match.group(1)}</strong>',
     );
 
     // Italic (*text* or _text_)
     result = result.replaceAllMapped(
       RegExp(r'\*(.+?)\*'),
-      (match) => '<em>${_escapeHtml(match.group(1)!)}</em>',
+      (match) => '<em>${match.group(1)}</em>',
     );
     result = result.replaceAllMapped(
       RegExp(r'_(.+?)_'),
-      (match) => '<em>${_escapeHtml(match.group(1)!)}</em>',
+      (match) => '<em>${match.group(1)}</em>',
     );
 
     // Links [text](url)
     result = result.replaceAllMapped(
       RegExp(r'\[(.+?)\]\((.+?)\)'),
-      (match) => '<a href="${_escapeHtml(match.group(2)!)}">${_escapeHtml(match.group(1)!)}</a>',
+      (match) => '<a href="${_escapeHtml(match.group(2)!)}">${match.group(1)}</a>',
     );
 
     // Code `code`
     result = result.replaceAllMapped(
       RegExp(r'`(.+?)`'),
-      (match) => '<code>${_escapeHtml(match.group(1)!)}</code>',
+      (match) => '<code>${match.group(1)}</code>',
     );
 
-    return _escapeHtml(result);
+    return result;
   }
 
   /// Check if line is a special markdown line (heading, list, etc.)
