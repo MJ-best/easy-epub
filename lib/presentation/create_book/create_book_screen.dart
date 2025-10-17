@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:flutter_html/flutter_html.dart';
 import '../viewmodels/create_book_viewmodel.dart';
 import '../../data/models/template_type.dart';
-import '../../core/constants/app_constants.dart';
+import '../../data/services/markdown_parser.dart';
 
 /// Screen for creating new eBooks
 /// Follows MVVM pattern with stateless widget
@@ -15,10 +15,18 @@ class CreateBookScreen extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => context.read<CreateBookViewModel>(),
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
-          title: const Text('새 전자책 만들기'),
+          title: Text(
+            '새 전자책',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           leading: IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, color: Theme.of(context).colorScheme.primary),
             onPressed: () => Navigator.pop(context),
             tooltip: '닫기',
           ),
@@ -36,134 +44,176 @@ class _CreateBookForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CreateBookViewModel>(
       builder: (context, viewModel, child) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppConstants.DEFAULT_PADDING),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Title Input
-              Semantics(
-                label: '제목 입력',
-                textField: true,
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: '제목',
-                    hintText: '전자책 제목을 입력하세요',
-                    prefixIcon: Icon(Icons.title),
+        return OrientationBuilder(
+          builder: (context, orientation) {
+            final isLandscape = orientation == Orientation.landscape;
+
+            if (isLandscape) {
+              // Landscape: Split screen
+              return Row(
+                children: [
+                  Expanded(
+                    child: _EditorPanel(viewModel: viewModel),
                   ),
-                  onChanged: viewModel.setTitle,
-                  maxLength: 100,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Author Input
-              Semantics(
-                label: '저자 입력',
-                textField: true,
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: '저자',
-                    hintText: '저자명을 입력하세요',
-                    prefixIcon: Icon(Icons.person),
+                  const VerticalDivider(width: 1, thickness: 1),
+                  Expanded(
+                    child: _PreviewPanel(viewModel: viewModel),
                   ),
-                  onChanged: viewModel.setAuthor,
-                  maxLength: 50,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Content Input
-              Semantics(
-                label: '본문 내용 입력',
-                textField: true,
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: '본문 내용',
-                    hintText: '전자책 내용을 입력하세요\n\n# 제목\n## 부제목\n본문...',
-                    prefixIcon: Icon(Icons.article),
-                    alignLabelWithHint: true,
+                ],
+              );
+            } else {
+              // Portrait: Single panel
+              return Column(
+                children: [
+                  Expanded(
+                    child: _EditorPanel(viewModel: viewModel),
                   ),
-                  onChanged: viewModel.setContent,
-                  maxLines: 10,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Cover Image Selection
-              _CoverImageSelector(),
-              const SizedBox(height: 24),
-
-              // Template Selection
-              const Text(
-                '템플릿 선택',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              _TemplateSelector(),
-              const SizedBox(height: 32),
-
-              // Error Message
-              if (viewModel.error != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Text(
-                    _getErrorMessage(viewModel.error!, context),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                      fontSize: 14,
+                  if (viewModel.content.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showPreviewDialog(context, viewModel),
+                        icon: const Icon(Icons.visibility),
+                        label: const Text('미리보기'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-              // Generate Button
-              Semantics(
-                label: '전자책 생성',
-                button: true,
-                child: ElevatedButton.icon(
-                  onPressed: viewModel.isGenerating
-                      ? null
-                      : () => _handleGenerate(context, viewModel),
-                  icon: viewModel.isGenerating
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.create),
-                  label: Text(
-                    viewModel.isGenerating ? '생성 중...' : '전자책 생성',
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-            ],
-          ),
+                  _BottomButton(viewModel: viewModel),
+                ],
+              );
+            }
+          },
         );
       },
     );
   }
 
-  Future<void> _handleGenerate(
-    BuildContext context,
-    CreateBookViewModel viewModel,
-  ) async {
-    final ebook = await viewModel.createEbook();
+  void _showPreviewDialog(BuildContext context, CreateBookViewModel viewModel) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: Column(
+            children: [
+              AppBar(
+                title: const Text('미리보기'),
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
+              ),
+              Expanded(
+                child: _PreviewPanel(viewModel: viewModel),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-    if (ebook != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('전자책이 생성되었습니다')),
-      );
-      Navigator.pop(context, true);
-    }
+class _EditorPanel extends StatelessWidget {
+  final CreateBookViewModel viewModel;
+
+  const _EditorPanel({required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      labelText: '제목',
+                      hintText: '전자책 제목',
+                      counterText: '',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    ),
+                    onChanged: viewModel.setTitle,
+                    maxLength: 100,
+                  ),
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      labelText: '저자',
+                      hintText: '저자명 (선택사항)',
+                      counterText: '',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    ),
+                    onChanged: viewModel.setAuthor,
+                    maxLength: 50,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: '본문',
+                hintText: '마크다운으로 작성하세요\n\n# 제목\n## 부제목\n본문 내용...',
+                alignLabelWithHint: true,
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+              ),
+              onChanged: viewModel.setContent,
+              maxLines: 15,
+              keyboardType: TextInputType.multiline,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '템플릿',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _TemplateSelector(viewModel: viewModel),
+          const SizedBox(height: 24),
+          if (viewModel.error != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Text(
+                _getErrorMessage(viewModel.error!, context),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   String _getErrorMessage(String errorKey, BuildContext context) {
@@ -180,109 +230,291 @@ class _CreateBookForm extends StatelessWidget {
   }
 }
 
-class _CoverImageSelector extends StatelessWidget {
+class _PreviewPanel extends StatelessWidget {
+  final CreateBookViewModel viewModel;
+
+  const _PreviewPanel({required this.viewModel});
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<CreateBookViewModel>(
-      builder: (context, viewModel, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    if (viewModel.content.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              '표지 이미지 (선택사항)',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            Icon(
+              Icons.visibility_outlined,
+              size: 48,
+              color: Theme.of(context).colorScheme.secondary,
             ),
-            const SizedBox(height: 12),
-            Semantics(
-              label: '표지 이미지 선택',
-              button: true,
-              child: OutlinedButton.icon(
-                onPressed: () => _selectCoverImage(context, viewModel),
-                icon: const Icon(Icons.image),
-                label: Text(
-                  viewModel.coverImagePath != null
-                      ? '이미지 변경'
-                      : '이미지 선택',
-                ),
-              ),
+            const SizedBox(height: 16),
+            Text(
+              '실시간 미리보기',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
             ),
-            if (viewModel.coverImagePath != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  '선택됨: ${viewModel.coverImagePath!.split('/').last}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
+            const SizedBox(height: 8),
+            Text(
+              '본문 내용을 입력하면\n여기에 표시됩니다',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+            ),
           ],
-        );
-      },
+        ),
+      );
+    }
+
+    final html = MarkdownParser.parseToHtml(viewModel.content);
+
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  width: 0.5,
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.visibility, size: 20, color: Theme.of(context).colorScheme.secondary),
+                const SizedBox(width: 8),
+                Text(
+                  '미리보기',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Html(
+                  data: html,
+                  style: {
+                    "body": Style(
+                      fontFamily: 'Noto Serif KR',
+                      fontSize: FontSize(16),
+                      lineHeight: const LineHeight(1.8),
+                      color: Colors.black,
+                      textAlign: TextAlign.justify,
+                      margin: Margins.zero,
+                      padding: HtmlPaddings.zero,
+                    ),
+                    "h1": Style(
+                      fontSize: FontSize(24),
+                      fontWeight: FontWeight.bold,
+                      lineHeight: const LineHeight(1.5),
+                      margin: Margins(top: Margin(32), bottom: Margin(16)),
+                      color: Colors.black,
+                    ),
+                    "h2": Style(
+                      fontSize: FontSize(20),
+                      fontWeight: FontWeight.bold,
+                      lineHeight: const LineHeight(1.5),
+                      margin: Margins(top: Margin(24), bottom: Margin(12)),
+                      color: Colors.black,
+                    ),
+                    "h3": Style(
+                      fontSize: FontSize(17),
+                      fontWeight: FontWeight.bold,
+                      lineHeight: const LineHeight(1.5),
+                      margin: Margins(top: Margin(20), bottom: Margin(10)),
+                      color: Colors.black,
+                    ),
+                    "p": Style(
+                      fontSize: FontSize(16),
+                      lineHeight: const LineHeight(1.8),
+                      margin: Margins(bottom: Margin(16)),
+                      textAlign: TextAlign.justify,
+                      color: Colors.black,
+                    ),
+                    "ul": Style(
+                      fontSize: FontSize(16),
+                      lineHeight: const LineHeight(1.8),
+                      margin: Margins(top: Margin(8), bottom: Margin(8)),
+                      padding: HtmlPaddings(left: HtmlPadding(32)),
+                    ),
+                    "ol": Style(
+                      fontSize: FontSize(16),
+                      lineHeight: const LineHeight(1.8),
+                      margin: Margins(top: Margin(8), bottom: Margin(8)),
+                      padding: HtmlPaddings(left: HtmlPadding(32)),
+                    ),
+                    "li": Style(
+                      margin: Margins(bottom: Margin(6)),
+                    ),
+                    "strong": Style(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    "em": Style(
+                      fontStyle: FontStyle.italic,
+                    ),
+                    "code": Style(
+                      fontFamily: 'Courier New',
+                      fontSize: FontSize(15),
+                      backgroundColor: const Color(0xFFF5F5F5),
+                      padding: HtmlPaddings.all(4),
+                    ),
+                    "a": Style(
+                      color: const Color(0xFF0066CC),
+                      textDecoration: TextDecoration.none,
+                    ),
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomButton extends StatelessWidget {
+  final CreateBookViewModel viewModel;
+
+  const _BottomButton({required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: viewModel.isGenerating
+                ? null
+                : () => _handleGenerate(context, viewModel),
+            child: viewModel.isGenerating
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text(
+                    '전자책 생성',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          ),
+        ),
+      ),
     );
   }
 
-  Future<void> _selectCoverImage(
+  Future<void> _handleGenerate(
     BuildContext context,
     CreateBookViewModel viewModel,
   ) async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-    );
+    final ebook = await viewModel.createEbook();
 
-    if (result != null && result.files.single.path != null) {
-      viewModel.setCoverImagePath(result.files.single.path);
+    if (ebook != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('전자책이 생성되었습니다')),
+      );
+      Navigator.pop(context, true);
     }
   }
 }
 
 class _TemplateSelector extends StatelessWidget {
+  final CreateBookViewModel viewModel;
+
+  const _TemplateSelector({required this.viewModel});
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<CreateBookViewModel>(
-      builder: (context, viewModel, child) {
-        return SizedBox(
-          height: 120,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: TemplateType.values.map((template) {
-              final isSelected = viewModel.selectedTemplate == template;
-              return Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Semantics(
-                  label: '${template.displayName} 템플릿',
-                  selected: isSelected,
-                  button: true,
-                  child: ChoiceChip(
-                    label: SizedBox(
-                      width: 100,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            _getTemplateIcon(template),
-                            size: 32,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: TemplateType.values.asMap().entries.map((entry) {
+          final index = entry.key;
+          final template = entry.value;
+          final isSelected = viewModel.selectedTemplate == template;
+          final isLast = index == TemplateType.values.length - 1;
+
+          return Column(
+            children: [
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => viewModel.selectTemplate(template),
+                  borderRadius: BorderRadius.vertical(
+                    top: index == 0 ? const Radius.circular(10) : Radius.zero,
+                    bottom: isLast ? const Radius.circular(10) : Radius.zero,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getTemplateIcon(template),
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.secondary,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
                             template.displayName,
-                            style: const TextStyle(fontSize: 14),
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        if (isSelected)
+                          Icon(
+                            Icons.check,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 22,
+                          ),
+                      ],
                     ),
-                    selected: isSelected,
-                    onSelected: (_) => viewModel.selectTemplate(template),
-                    padding: const EdgeInsets.all(16),
                   ),
                 ),
-              );
-            }).toList(),
-          ),
-        );
-      },
+              ),
+              if (!isLast)
+                const Divider(height: 1, indent: 52, endIndent: 16),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 

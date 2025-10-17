@@ -5,9 +5,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_constants.dart';
+import 'core/providers/theme_provider.dart';
 import 'data/models/ebook_model.dart';
 import 'data/repositories/ebook_repository_impl.dart';
-import 'data/services/epub_generator_service.dart';
+import 'data/services/epub_generator_service_v2.dart';
 import 'presentation/home/home_screen.dart';
 import 'presentation/viewmodels/library_viewmodel.dart';
 import 'presentation/viewmodels/create_book_viewmodel.dart';
@@ -26,7 +27,7 @@ void main() async {
   await repository.init();
 
   // Initialize services
-  final epubGenerator = EpubGeneratorService();
+  final epubGenerator = EpubGeneratorServiceV2();
 
   runApp(
     EasyPubApp(
@@ -39,7 +40,7 @@ void main() async {
 /// Main application widget
 class EasyPubApp extends StatelessWidget {
   final EbookRepositoryImpl repository;
-  final EpubGeneratorService epubGenerator;
+  final EpubGeneratorServiceV2 epubGenerator;
 
   const EasyPubApp({
     super.key,
@@ -51,11 +52,14 @@ class EasyPubApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // Theme provider
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+
         // Repository provider
         Provider<EbookRepositoryImpl>.value(value: repository),
 
         // Service provider
-        Provider<EpubGeneratorService>.value(value: epubGenerator),
+        Provider<EpubGeneratorServiceV2>.value(value: epubGenerator),
 
         // ViewModel providers
         ChangeNotifierProvider(
@@ -65,29 +69,33 @@ class EasyPubApp extends StatelessWidget {
           create: (_) => CreateBookViewModel(repository, epubGenerator),
         ),
       ],
-      child: MaterialApp(
-        title: AppConstants.APP_NAME,
-        debugShowCheckedModeBanner: false,
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: AppConstants.APP_NAME,
+            debugShowCheckedModeBanner: false,
 
-        // Theme configuration
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
+            // Theme configuration
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
 
-        // Localization
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('ko', 'KR'),
-          Locale('en', 'US'),
-        ],
-        locale: const Locale('ko', 'KR'),
+            // Localization
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('ko', 'KR'),
+              Locale('en', 'US'),
+            ],
+            locale: const Locale('ko', 'KR'),
 
-        // Home screen
-        home: const HomeScreen(),
+            // Home screen
+            home: const HomeScreen(),
+          );
+        },
       ),
     );
   }

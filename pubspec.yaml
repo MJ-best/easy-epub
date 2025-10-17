@@ -21,6 +21,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.1
+  shared_preferences: ^2.2.2
 
   # EPUB Generation & Viewing
   epub_view: ^3.1.0
@@ -36,6 +37,8 @@ dependencies:
 
   # UI Components
   cached_network_image: ^3.3.0
+  flutter_html: ^3.0.0-beta.2
+  webview_flutter: ^4.4.2
 
 dev_dependencies:
   flutter_test:

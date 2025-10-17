@@ -4,149 +4,203 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  // Color Schemes
+  // Color Schemes - Minimalist iPhone-style colors
   static const ColorScheme _lightColorScheme = ColorScheme(
     brightness: Brightness.light,
-    primary: Color(0xFF6750A4),
+    primary: Color(0xFF007AFF), // iOS blue
     onPrimary: Color(0xFFFFFFFF),
-    primaryContainer: Color(0xFFEADDFF),
-    onPrimaryContainer: Color(0xFF21005D),
-    secondary: Color(0xFF625B71),
+    primaryContainer: Color(0xFFE3F2FD),
+    onPrimaryContainer: Color(0xFF001A33),
+    secondary: Color(0xFF8E8E93), // iOS gray
     onSecondary: Color(0xFFFFFFFF),
-    secondaryContainer: Color(0xFFE8DEF8),
-    onSecondaryContainer: Color(0xFF1D192B),
-    tertiary: Color(0xFF7D5260),
+    secondaryContainer: Color(0xFFF2F2F7),
+    onSecondaryContainer: Color(0xFF1C1C1E),
+    tertiary: Color(0xFF5AC8FA), // iOS light blue
     onTertiary: Color(0xFFFFFFFF),
-    tertiaryContainer: Color(0xFFFFD8E4),
-    onTertiaryContainer: Color(0xFF31111D),
-    error: Color(0xFFB3261E),
+    tertiaryContainer: Color(0xFFE0F7FA),
+    onTertiaryContainer: Color(0xFF001A1F),
+    error: Color(0xFFFF3B30), // iOS red
     onError: Color(0xFFFFFFFF),
-    errorContainer: Color(0xFFF9DEDC),
-    onErrorContainer: Color(0xFF410E0B),
-    background: Color(0xFFFFFBFE),
-    onBackground: Color(0xFF1C1B1F),
-    surface: Color(0xFFFFFBFE),
-    onSurface: Color(0xFF1C1B1F),
-    surfaceVariant: Color(0xFFE7E0EC),
-    onSurfaceVariant: Color(0xFF49454F),
-    outline: Color(0xFF79747E),
-    outlineVariant: Color(0xFFCAC4D0),
+    errorContainer: Color(0xFFFFEBEE),
+    onErrorContainer: Color(0xFF330000),
+    background: Color(0xFFF2F2F7), // iOS background
+    onBackground: Color(0xFF000000),
+    surface: Color(0xFFFFFFFF),
+    onSurface: Color(0xFF000000),
+    surfaceVariant: Color(0xFFF2F2F7),
+    onSurfaceVariant: Color(0xFF48484A),
+    outline: Color(0xFFC6C6C8),
+    outlineVariant: Color(0xFFE5E5EA),
     shadow: Color(0xFF000000),
     scrim: Color(0xFF000000),
-    inverseSurface: Color(0xFF313033),
-    onInverseSurface: Color(0xFFF4EFF4),
-    inversePrimary: Color(0xFFD0BCFF),
+    inverseSurface: Color(0xFF1C1C1E),
+    onInverseSurface: Color(0xFFFFFFFF),
+    inversePrimary: Color(0xFF0A84FF),
   );
 
   static const ColorScheme _darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xFFD0BCFF),
-    onPrimary: Color(0xFF381E72),
-    primaryContainer: Color(0xFF4F378B),
-    onPrimaryContainer: Color(0xFFEADDFF),
-    secondary: Color(0xFFCCC2DC),
-    onSecondary: Color(0xFF332D41),
-    secondaryContainer: Color(0xFF4A4458),
-    onSecondaryContainer: Color(0xFFE8DEF8),
-    tertiary: Color(0xFFEFB8C8),
-    onTertiary: Color(0xFF492532),
-    tertiaryContainer: Color(0xFF633B48),
-    onTertiaryContainer: Color(0xFFFFD8E4),
-    error: Color(0xFFF2B8B5),
-    onError: Color(0xFF601410),
-    errorContainer: Color(0xFF8C1D18),
-    onErrorContainer: Color(0xFFF9DEDC),
-    background: Color(0xFF1C1B1F),
-    onBackground: Color(0xFFE6E1E5),
-    surface: Color(0xFF1C1B1F),
-    onSurface: Color(0xFFE6E1E5),
-    surfaceVariant: Color(0xFF49454F),
-    onSurfaceVariant: Color(0xFFCAC4D0),
-    outline: Color(0xFF938F99),
-    outlineVariant: Color(0xFF49454F),
+    primary: Color(0xFF0A84FF), // iOS blue dark mode
+    onPrimary: Color(0xFFFFFFFF),
+    primaryContainer: Color(0xFF004080),
+    onPrimaryContainer: Color(0xFFD0E8FF),
+    secondary: Color(0xFF8E8E93), // iOS gray dark
+    onSecondary: Color(0xFF1C1C1E),
+    secondaryContainer: Color(0xFF2C2C2E),
+    onSecondaryContainer: Color(0xFFE5E5EA),
+    tertiary: Color(0xFF64D2FF), // iOS light blue dark
+    onTertiary: Color(0xFF1C1C1E),
+    tertiaryContainer: Color(0xFF003D4A),
+    onTertiaryContainer: Color(0xFFB3E5FC),
+    error: Color(0xFFFF453A), // iOS red dark mode
+    onError: Color(0xFFFFFFFF),
+    errorContainer: Color(0xFF660000),
+    onErrorContainer: Color(0xFFFFCDD2),
+    background: Color(0xFF000000), // iOS dark background
+    onBackground: Color(0xFFFFFFFF),
+    surface: Color(0xFF1C1C1E),
+    onSurface: Color(0xFFFFFFFF),
+    surfaceVariant: Color(0xFF2C2C2E),
+    onSurfaceVariant: Color(0xFFAEAEB2),
+    outline: Color(0xFF48484A),
+    outlineVariant: Color(0xFF38383A),
     shadow: Color(0xFF000000),
     scrim: Color(0xFF000000),
-    inverseSurface: Color(0xFFE6E1E5),
-    onInverseSurface: Color(0xFF313033),
-    inversePrimary: Color(0xFF6750A4),
+    inverseSurface: Color(0xFFFFFFFF),
+    onInverseSurface: Color(0xFF000000),
+    inversePrimary: Color(0xFF007AFF),
   );
 
-  /// Light theme configuration
+  /// Light theme configuration - Minimalist iPhone style
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: _lightColorScheme,
-      appBarTheme: const AppBarTheme(
-        centerTitle: true,
+      appBarTheme: AppBarTheme(
+        centerTitle: false,
         elevation: 0,
+        backgroundColor: _lightColorScheme.surface,
+        foregroundColor: _lightColorScheme.onSurface,
+        scrolledUnderElevation: 0,
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
+        elevation: 0,
+        color: _lightColorScheme.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
         ),
+        margin: EdgeInsets.zero,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(88, 44),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          minimumSize: const Size(88, 50),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        shape: CircleBorder(),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        elevation: 0,
+        backgroundColor: _lightColorScheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
+        fillColor: _lightColorScheme.surfaceVariant,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: _lightColorScheme.primary,
+            width: 1,
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,
         ),
+      ),
+      dividerTheme: DividerThemeData(
+        color: _lightColorScheme.outlineVariant,
+        thickness: 0.5,
       ),
     );
   }
 
-  /// Dark theme configuration
+  /// Dark theme configuration - Minimalist iPhone style
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: _darkColorScheme,
-      appBarTheme: const AppBarTheme(
-        centerTitle: true,
+      appBarTheme: AppBarTheme(
+        centerTitle: false,
         elevation: 0,
+        backgroundColor: _darkColorScheme.surface,
+        foregroundColor: _darkColorScheme.onSurface,
+        scrolledUnderElevation: 0,
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
+        elevation: 0,
+        color: _darkColorScheme.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
         ),
+        margin: EdgeInsets.zero,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(88, 44),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          minimumSize: const Size(88, 50),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        shape: CircleBorder(),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        elevation: 0,
+        backgroundColor: _darkColorScheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
+        fillColor: _darkColorScheme.surfaceVariant,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: _darkColorScheme.primary,
+            width: 1,
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,
         ),
+      ),
+      dividerTheme: DividerThemeData(
+        color: _darkColorScheme.outlineVariant,
+        thickness: 0.5,
       ),
     );
   }

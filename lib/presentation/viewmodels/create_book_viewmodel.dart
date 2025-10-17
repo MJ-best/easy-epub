@@ -3,13 +3,13 @@ import 'package:uuid/uuid.dart';
 import '../../data/models/ebook_model.dart';
 import '../../data/models/template_type.dart';
 import '../../domain/repositories/ebook_repository.dart';
-import '../../data/services/epub_generator_service.dart';
+import '../../data/services/epub_generator_service_v2.dart';
 
 /// ViewModel for eBook creation screen
 /// Handles eBook creation logic and state
 class CreateBookViewModel extends ChangeNotifier {
   final EbookRepository _repository;
-  final EpubGeneratorService _epubGenerator;
+  final EpubGeneratorServiceV2 _epubGenerator;
 
   CreateBookViewModel(this._repository, this._epubGenerator);
 

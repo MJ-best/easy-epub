@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
+   "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <head>
+    <meta name="dtb:uid" content="urn:uuid:21840AAA-90C4-11E0-8CE6-001E2A3A85FB"/>
+    <meta name="dtb:depth" content="3"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+  <docTitle>
+    <text>나는 매일 작은 성공을 합니다</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="navPoint-1" playOrder="1">
+      <navLabel>
+        <text>책의 시작</text>
+      </navLabel>
+      <content src="Text/cover.html"/>
+    </navPoint>
+    <navPoint id="navPoint-2" playOrder="2">
+      <navLabel>
+        <text>저자 소개</text>
+      </navLabel>
+      <content src="Text/author.html"/>
+    </navPoint>
+    <navPoint id="navPoint-3" playOrder="3">
+      <navLabel>
+        <text>프롤로그 인생의 터닝포인트를 만들어준 작은 성공의 경험</text>
+      </navLabel>
+      <content src="Text/intro1.html"/>
+    </navPoint>
+    <navPoint id="navPoint-4" playOrder="4">
+      <navLabel>
+        <text>Part 1 [몸풀기] 지금 당장 시작할 수 있는 도전</text>
+      </navLabel>
+      <content src="Text/part1.html"/>
+      <navPoint id="navPoint-5" playOrder="5">
+        <navLabel>
+          <text>01. 인스타그램 지우기</text>
+        </navLabel>
+        <content src="Text/do01.html"/>
+        <navPoint id="navPoint-6" playOrder="6">
+          <navLabel>
+            <text>-타인의 삶이 아닌 나 자신에게 집중하는 삶</text>
+          </navLabel>
+          <content src="Text/do01.html#sigil_toc_id_1"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-7" playOrder="7">
+        <navLabel>
+          <text>02. 커피 마시지 않기</text>
+        </navLabel>
+        <content src="Text/d02.html"/>
+        <navPoint id="navPoint-8" playOrder="8">
+          <navLabel>
+            <text>-중독이 된 습관에서 벗어나는 방법</text>
+          </navLabel>
+          <content src="Text/d02.html#sigil_toc_id_2"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-9" playOrder="9">
+        <navLabel>
+          <text>03. 매일 같은 옷 입기</text>
+        </navLabel>
+        <content src="Text/do03.html"/>
+        <navPoint id="navPoint-10" playOrder="10">
+          <navLabel>
+            <text>-한정된 시간을 어떤 고민으로 채울 것인가</text>
+          </navLabel>
+          <content src="Text/do03.html#sigil_toc_id_3"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-11" playOrder="11">
+        <navLabel>
+          <text>04. 매일 물 2리터씩 마시기</text>
+        </navLabel>
+        <content src="Text/do04.html"/>
+        <navPoint id="navPoint-12" playOrder="12">
+          <navLabel>
+            <text>-건강한 인생 습관을 만드는 방법</text>
+          </navLabel>
+          <content src="Text/do04.html#sigil_toc_id_4"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-13" playOrder="13">
+        <navLabel>
+          <text>05. 5초의 법칙 실행하기</text>
+        </navLabel>
+        <content src="Text/do05.html"/>
+        <navPoint id="navPoint-14" playOrder="14">
+          <navLabel>
+            <text>-무기력한 뇌를 깨우는 뇌 정리법</text>
+          </navLabel>
+          <content src="Text/do05.html#sigil_toc_id_5"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-15" playOrder="15">
+        <navLabel>
+          <text>06. 한 달 동안 쓰레기 모으기</text>
+        </navLabel>
+        <content src="Text/do06.html"/>
+        <navPoint id="navPoint-16" playOrder="16">
+          <navLabel>
+            <text>-혼자만이 아니라 더불어 잘 사는 방법</text>
+          </navLabel>
+          <content src="Text/do06.html#sigil_toc_id_6"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-17" playOrder="17">
+        <navLabel>
+          <text>[STEP 1] 목표를 쉽게 달성하는 다섯 가지 방법</text>
+        </navLabel>
+        <content src="Text/step1.html"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint-18" playOrder="18">
+      <navLabel>
+        <text>Part 2 [초급] 하루 30분,나를 위한 시간</text>
+      </navLabel>
+      <content src="Text/part2.html"/>
+      <navPoint id="navPoint-19" playOrder="19">
+        <navLabel>
+          <text>07. 매일 감사한 일 다섯 가지 기록하기</text>
+        </navLabel>
+        <content src="Text/do07.html"/>
+        <navPoint id="navPoint-20" playOrder="20">
+          <navLabel>
+            <text>-긍정적인 삶을 위한 작은 실천</text>
+          </navLabel>
+          <content src="Text/do07.html#sigil_toc_id_7"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-21" playOrder="21">
+        <navLabel>
+          <text>08. 매일 30분 명상하기</text>
+        </navLabel>
+        <content src="Text/do08.html"/>
+        <navPoint id="navPoint-22" playOrder="22">
+          <navLabel>
+            <text>-가볍게 마음을 비워내는 방법</text>
+          </navLabel>
+          <content src="Text/do08.html#sigil_toc_id_8"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-23" playOrder="23">
+        <navLabel>
+          <text>09. 일주일 삼시 세끼 모두 요리하기</text>
+        </navLabel>
+        <content src="Text/do09.html"/>
+        <navPoint id="navPoint-24" playOrder="24">
+          <navLabel>
+            <text>-내가 먹은 것이 곧 나 자신이 된다</text>
+          </navLabel>
+          <content src="Text/do09.html#sigil_toc_id_9"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-25" playOrder="25">
+        <navLabel>
+          <text>10. 일주일 동안 5만 원으로 살기</text>
+        </navLabel>
+        <content src="Text/do10.html"/>
+        <navPoint id="navPoint-26" playOrder="26">
+          <navLabel>
+            <text>-최소한의 지출로 최대한의 행복을 사는 방법</text>
+          </navLabel>
+          <content src="Text/do10.html#sigil_toc_id_10"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-27" playOrder="27">
+        <navLabel>
+          <text>11. 제주 한 달 살기</text>
+        </navLabel>
+        <content src="Text/do11.html"/>
+        <navPoint id="navPoint-28" playOrder="28">
+          <navLabel>
+            <text>-인생에도 브레이크가 필요하다</text>
+          </navLabel>
+          <content src="Text/do11.html#sigil_toc_id_11"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-29" playOrder="29">
+        <navLabel>
+          <text>[STEP 2] 나만의 루틴을 찾아 보세요</text>
+        </navLabel>
+        <content src="Text/step2.html"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint-30" playOrder="30">
+      <navLabel>
+        <text>Part 3 [중급] 도전하는 하루가 쌓여갑니다</text>
+      </navLabel>
+      <content src="Text/part3.html"/>
+      <navPoint id="navPoint-31" playOrder="31">
+        <navLabel>
+          <text>12. 매일 일기 쓰기</text>
+        </navLabel>
+        <content src="Text/do12.html"/>
+        <navPoint id="navPoint-32" playOrder="32">
+          <navLabel>
+            <text>-나도 몰랐던 나를 발견하는 방법</text>
+          </navLabel>
+          <content src="Text/do12.html#sigil_toc_id_12"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-33" playOrder="33">
+        <navLabel>
+          <text>13. 미니멀리즘 실천하기</text>
+        </navLabel>
+        <content src="Text/do13.html"/>
+        <navPoint id="navPoint-34" playOrder="34">
+          <navLabel>
+            <text>-삶을 스스로 통제할 수 있는 범위로 좁히기</text>
+          </navLabel>
+          <content src="Text/do13.html#sigil_toc_id_13"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-35" playOrder="35">
+        <navLabel>
+          <text>14. 16대 8 간헐적 단식하기</text>
+        </navLabel>
+        <content src="Text/do14.html"/>
+        <navPoint id="navPoint-36" playOrder="36">
+          <navLabel>
+            <text>-나의 삶을 주도하는 간단한 시작</text>
+          </navLabel>
+          <content src="Text/do14.html#sigil_toc_id_14"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-37" playOrder="37">
+        <navLabel>
+          <text>15. 매일 계단으로 다니기</text>
+        </navLabel>
+        <content src="Text/do15.html"/>
+        <navPoint id="navPoint-38" playOrder="38">
+          <navLabel>
+            <text>-사소한 습관으로 삶의 만족도를 높인다</text>
+          </navLabel>
+          <content src="Text/do15.html#sigil_toc_id_15"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-39" playOrder="39">
+        <navLabel>
+          <text>16. 한 달 동안 요가하기</text>
+        </navLabel>
+        <content src="Text/do16.html"/>
+        <navPoint id="navPoint-40" playOrder="40">
+          <navLabel>
+            <text>-나와 너, 우리의 평안을 비는 단순한 방법</text>
+          </navLabel>
+          <content src="Text/do16.html#sigil_toc_id_16"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-41" playOrder="41">
+        <navLabel>
+          <text>17. 5주 만에 복근 만들기</text>
+        </navLabel>
+        <content src="Text/do17.html"/>
+        <navPoint id="navPoint-42" playOrder="42">
+          <navLabel>
+            <text>-자신과의 싸움에서 이기는 법</text>
+          </navLabel>
+          <content src="Text/do17.html#sigil_toc_id_17"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-43" playOrder="43">
+        <navLabel>
+          <text>[STEP 3] 한국타잔의 슬럼프 극복기</text>
+        </navLabel>
+        <content src="Text/step3.html"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint-44" playOrder="44">
+      <navLabel>
+        <text>Part 4 [고급] 나의 한계에 도전한다</text>
+      </navLabel>
+      <content src="Text/part4.html"/>
+      <navPoint id="navPoint-45" playOrder="45">
+        <navLabel>
+          <text>18. 미라클 모닝 실천하기</text>
+        </navLabel>
+        <content src="Text/do18.html"/>
+        <navPoint id="navPoint-46" playOrder="46">
+          <navLabel>
+            <text>-함께일 때 더 빛을 발하는 도전</text>
+          </navLabel>
+          <content src="Text/do18.html#sigil_toc_id_18"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-47" playOrder="47">
+        <navLabel>
+          <text>19. 턱걸이 열 개에 도전하기</text>
+        </navLabel>
+        <content src="Text/do19.html"/>
+        <navPoint id="navPoint-48" playOrder="48">
+          <navLabel>
+            <text>-목표를 정해 자신의 한계를 끌어올리는 방법</text>
+          </navLabel>
+          <content src="Text/do19.html#sigil_toc_id_19"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-49" playOrder="49">
+        <navLabel>
+          <text>20. 일주일 동안 1일 1독 하기</text>
+        </navLabel>
+        <content src="Text/do20.html"/>
+        <navPoint id="navPoint-50" playOrder="50">
+          <navLabel>
+            <text>-세상에서 가장 가성비 좋은 자기계발</text>
+          </navLabel>
+          <content src="Text/do20.html#sigil_toc_id_20"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-51" playOrder="51">
+        <navLabel>
+          <text>21. 12킬로미터 마라톤 완주하기</text>
+        </navLabel>
+        <content src="Text/do21.html"/>
+        <navPoint id="navPoint-52" playOrder="52">
+          <navLabel>
+            <text>-오르고 내리며 인생을 간접 경험하는 방법</text>
+          </navLabel>
+          <content src="Text/do21.html#sigil_toc_id_21"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-53" playOrder="53">
+        <navLabel>
+          <text>22. 다리 찢기 챌린지</text>
+        </navLabel>
+        <content src="Text/d22.html"/>
+        <navPoint id="navPoint-54" playOrder="54">
+          <navLabel>
+            <text>-실패를 겸허히 받아들이기</text>
+          </navLabel>
+          <content src="Text/d22.html#sigil_toc_id_22"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-55" playOrder="55">
+        <navLabel>
+          <text>23. 1일 1영상 업로드하기</text>
+        </navLabel>
+        <content src="Text/d023.html"/>
+        <navPoint id="navPoint-56" playOrder="56">
+          <navLabel>
+            <text>-가장 나답게 위기를 극복한다</text>
+          </navLabel>
+          <content src="Text/d023.html#sigil_toc_id_23"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint-57" playOrder="57">
+        <navLabel>
+          <text>[STEP 4] 한국타잔의 도전 PICK!</text>
+        </navLabel>
+        <content src="Text/step4.html"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint-58" playOrder="58">
+      <navLabel>
+        <text>에필로그 변화를 만드는 한 번의 작은 성공</text>
+      </navLabel>
+      <content src="Text/ep.html"/>
+    </navPoint>
+    <navPoint id="navPoint-59" playOrder="59">
+      <navLabel>
+        <text>나의 도전에 영감을 준 책들</text>
+      </navLabel>
+      <content src="Text/ep2.html"/>
+    </navPoint>
+  </navMap>
+</ncx>
