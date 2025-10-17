@@ -1,0 +1,107 @@
+{
+  "@@locale": "en",
+  "appName": "EasyPub",
+  "@appName": {
+    "description": "Application name"
+  },
+  "homeTitle": "eBook Library",
+  "@homeTitle": {
+    "description": "Home screen title"
+  },
+  "createNewBook": "Create New eBook",
+  "@createNewBook": {
+    "description": "Create new eBook button"
+  },
+  "bookTitle": "Title",
+  "@bookTitle": {
+    "description": "Book title"
+  },
+  "bookAuthor": "Author",
+  "@bookAuthor": {
+    "description": "Book author"
+  },
+  "bookContent": "Content",
+  "@bookContent": {
+    "description": "Book content"
+  },
+  "selectTemplate": "Select Template",
+  "@selectTemplate": {
+    "description": "Select template label"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "Preview button"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share button"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button"
+  },
+  "deleteConfirmMessage": "Are you sure you want to delete this eBook?",
+  "@deleteConfirmMessage": {
+    "description": "Delete confirmation message"
+  },
+  "emptyLibrary": "No eBooks created yet",
+  "@emptyLibrary": {
+    "description": "Empty library message"
+  },
+  "templateNovel": "Novel",
+  "@templateNovel": {
+    "description": "Novel template"
+  },
+  "templateEssay": "Essay",
+  "@templateEssay": {
+    "description": "Essay template"
+  },
+  "templateManual": "Manual",
+  "@templateManual": {
+    "description": "Manual template"
+  },
+  "selectCoverImage": "Select Cover Image",
+  "@selectCoverImage": {
+    "description": "Select cover image button"
+  },
+  "createdDate": "Created",
+  "@createdDate": {
+    "description": "Created date label"
+  },
+  "modifiedDate": "Modified",
+  "@modifiedDate": {
+    "description": "Modified date label"
+  },
+  "generating": "Generating eBook...",
+  "@generating": {
+    "description": "Generating message"
+  },
+  "generationComplete": "eBook generated successfully",
+  "@generationComplete": {
+    "description": "Generation complete message"
+  },
+  "errorOccurred": "An error occurred",
+  "@errorOccurred": {
+    "description": "Error message"
+  },
+  "titleRequired": "Please enter a title",
+  "@titleRequired": {
+    "description": "Title required message"
+  },
+  "contentRequired": "Please enter content",
+  "@contentRequired": {
+    "description": "Content required message"
+  }
+}

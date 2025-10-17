@@ -1,0 +1,107 @@
+{
+  "@@locale": "ko",
+  "appName": "EasyPub",
+  "@appName": {
+    "description": "애플리케이션 이름"
+  },
+  "homeTitle": "전자책 라이브러리",
+  "@homeTitle": {
+    "description": "홈 화면 제목"
+  },
+  "createNewBook": "새 전자책 만들기",
+  "@createNewBook": {
+    "description": "새 전자책 생성 버튼"
+  },
+  "bookTitle": "제목",
+  "@bookTitle": {
+    "description": "책 제목"
+  },
+  "bookAuthor": "저자",
+  "@bookAuthor": {
+    "description": "책 저자"
+  },
+  "bookContent": "본문 내용",
+  "@bookContent": {
+    "description": "책 본문"
+  },
+  "selectTemplate": "템플릿 선택",
+  "@selectTemplate": {
+    "description": "템플릿 선택 레이블"
+  },
+  "preview": "미리보기",
+  "@preview": {
+    "description": "미리보기 버튼"
+  },
+  "save": "저장",
+  "@save": {
+    "description": "저장 버튼"
+  },
+  "share": "공유",
+  "@share": {
+    "description": "공유 버튼"
+  },
+  "delete": "삭제",
+  "@delete": {
+    "description": "삭제 버튼"
+  },
+  "cancel": "취소",
+  "@cancel": {
+    "description": "취소 버튼"
+  },
+  "confirm": "확인",
+  "@confirm": {
+    "description": "확인 버튼"
+  },
+  "deleteConfirmMessage": "이 전자책을 삭제하시겠습니까?",
+  "@deleteConfirmMessage": {
+    "description": "삭제 확인 메시지"
+  },
+  "emptyLibrary": "아직 생성된 전자책이 없습니다",
+  "@emptyLibrary": {
+    "description": "빈 라이브러리 메시지"
+  },
+  "templateNovel": "소설형",
+  "@templateNovel": {
+    "description": "소설 템플릿"
+  },
+  "templateEssay": "수필형",
+  "@templateEssay": {
+    "description": "수필 템플릿"
+  },
+  "templateManual": "매뉴얼형",
+  "@templateManual": {
+    "description": "매뉴얼 템플릿"
+  },
+  "selectCoverImage": "표지 이미지 선택",
+  "@selectCoverImage": {
+    "description": "표지 이미지 선택 버튼"
+  },
+  "createdDate": "생성일",
+  "@createdDate": {
+    "description": "생성일 레이블"
+  },
+  "modifiedDate": "수정일",
+  "@modifiedDate": {
+    "description": "수정일 레이블"
+  },
+  "generating": "전자책 생성 중...",
+  "@generating": {
+    "description": "생성 중 메시지"
+  },
+  "generationComplete": "전자책이 생성되었습니다",
+  "@generationComplete": {
+    "description": "생성 완료 메시지"
+  },
+  "errorOccurred": "오류가 발생했습니다",
+  "@errorOccurred": {
+    "description": "오류 메시지"
+  },
+  "titleRequired": "제목을 입력해주세요",
+  "@titleRequired": {
+    "description": "제목 필수 입력 메시지"
+  },
+  "contentRequired": "본문을 입력해주세요",
+  "@contentRequired": {
+    "description": "본문 필수 입력 메시지"
+  }
+}

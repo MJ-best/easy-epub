@@ -1,0 +1,52 @@
+name: easypub
+description: A simple EPUB book generator app built with Flutter
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.1
+
+  # Data Persistence
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.1
+
+  # EPUB Generation & Viewing
+  epub_view: ^3.1.0
+  archive: ^3.4.9
+  uuid: ^4.2.1
+
+  # File Handling
+  file_picker: ^10.3.3
+  share_plus: ^12.0.0
+
+  # Internationalization
+  intl: ^0.20.2
+
+  # UI Components
+  cached_network_image: ^3.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.7
+  mockito: ^5.4.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
