@@ -13,6 +13,7 @@ import 'package:easypub/domain/repositories/ebook_repository.dart';
 import 'package:easypub/presentation/home/home_screen.dart';
 import 'package:easypub/presentation/viewmodels/library_viewmodel.dart';
 import 'package:easypub/data/models/ebook_model.dart';
+import 'package:easypub/core/providers/theme_provider.dart';
 
 class _FakeEbookRepository implements EbookRepository {
   @override
@@ -45,6 +46,9 @@ void main() {
       MultiProvider(
         providers: [
           Provider<EbookRepository>.value(value: repository),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(),
+          ),
           ChangeNotifierProvider(
             create: (_) => LibraryViewModel(repository)..loadEbooks(),
           ),

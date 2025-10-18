@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../core/providers/theme_provider.dart';
 import '../viewmodels/library_viewmodel.dart';
 import '../create_book/create_book_screen.dart';
@@ -16,7 +18,7 @@ class HomeScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         titleSpacing: 20,
         title: Text(
@@ -131,6 +133,7 @@ class HomeScreen extends StatelessWidget {
                   title: ebook.title,
                   author: ebook.author,
                   modifiedDate: ebook.modifiedAt,
+                  epubFilePath: ebook.epubFilePath,
                   onTap: () {
                     if (ebook.epubFilePath != null) {
                       Navigator.push(
@@ -141,6 +144,9 @@ class HomeScreen extends StatelessWidget {
                       );
                     }
                   },
+                  onShare: ebook.epubFilePath != null
+                      ? () => _shareEpub(context, ebook.epubFilePath!)
+                      : null,
                   onDelete: () => _confirmDelete(context, viewModel, ebook.id),
                 );
               },
@@ -219,6 +225,31 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _shareEpub(BuildContext context, String epubPath) async {
+    try {
+      final file = File(epubPath);
+      if (!await file.exists()) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('파일을 찾을 수 없습니다')),
+          );
+        }
+        return;
+      }
+
+      await Share.shareXFiles(
+        [XFile(epubPath)],
+        subject: 'EPUB 전자책 공유',
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('공유 실패: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
   void _confirmDelete(BuildContext context, LibraryViewModel viewModel, String id) {
     showDialog(
       context: context,
@@ -251,14 +282,18 @@ class _EbookListItem extends StatelessWidget {
   final String title;
   final String author;
   final DateTime modifiedDate;
+  final String? epubFilePath;
   final VoidCallback onTap;
+  final VoidCallback? onShare;
   final VoidCallback onDelete;
 
   const _EbookListItem({
     required this.title,
     required this.author,
     required this.modifiedDate,
+    this.epubFilePath,
     required this.onTap,
+    this.onShare,
     required this.onDelete,
   });
 
@@ -267,7 +302,7 @@ class _EbookListItem extends StatelessWidget {
     final theme = Theme.of(context);
     final dateFormatter = DateFormat('yyyy.MM.dd');
 
-    final textScale = MediaQuery.textScalerOf(context).textScaleFactor.clamp(1.0, 1.3);
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0).clamp(1.0, 1.3);
 
     return Semantics(
       label: '$title, 저자: $author',
@@ -325,6 +360,17 @@ class _EbookListItem extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (onShare != null)
+                    IconButton(
+                      iconSize: 24,
+                      visualDensity: VisualDensity.compact,
+                      icon: Icon(
+                        Icons.share_outlined,
+                        color: theme.colorScheme.primary,
+                      ),
+                      onPressed: onShare,
+                      tooltip: '공유',
+                    ),
                   IconButton(
                     iconSize: 26,
                     visualDensity: VisualDensity.compact,

@@ -7,6 +7,7 @@ class MarkdownParser {
 
     bool inParagraph = false;
     bool inList = false;
+    bool inTable = false;
     String? currentListTag;
 
     for (var i = 0; i < lines.length; i++) {
@@ -23,6 +24,10 @@ class MarkdownParser {
           buffer.writeln('</$currentListTag>');
           inList = false;
           currentListTag = null;
+        }
+        if (inTable) {
+          buffer.writeln('</table>');
+          inTable = false;
         }
         buffer.writeln('<p class="txt bl"><br/></p>');
         continue;
@@ -107,6 +112,59 @@ class MarkdownParser {
         continue;
       }
 
+      // Table
+      if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+        if (inParagraph) {
+          buffer.writeln('</p>');
+          inParagraph = false;
+        }
+        closeListIfNeeded();
+
+        // Check if this is a separator line
+        final isSeparator = RegExp(r'^\|[\s\-:|]+\|$').hasMatch(trimmed);
+
+        if (!inTable && !isSeparator) {
+          buffer.writeln('<table style="border-collapse: collapse; width: 100%; margin: 1em 0;">');
+          buffer.writeln('<thead>');
+          inTable = true;
+        }
+
+        if (isSeparator) {
+          buffer.writeln('</thead>');
+          buffer.writeln('<tbody>');
+        } else {
+          final cells = trimmed.split('|').where((c) => c.trim().isNotEmpty).toList();
+          buffer.write('<tr>');
+          for (final cell in cells) {
+            final tag = inTable && buffer.toString().contains('</thead>') ? 'td' : 'th';
+            buffer.write('<$tag style="border: 1px solid #ddd; padding: 8px;">${_processInlineMarkdown(cell.trim())}</$tag>');
+          }
+          buffer.writeln('</tr>');
+        }
+        continue;
+      } else if (inTable) {
+        buffer.writeln('</tbody>');
+        buffer.writeln('</table>');
+        inTable = false;
+      }
+
+      // Images ![alt](url)
+      if (RegExp(r'^\!\[.*?\]\(.*?\)$').hasMatch(trimmed)) {
+        if (inParagraph) {
+          buffer.writeln('</p>');
+          inParagraph = false;
+        }
+        closeListIfNeeded();
+
+        final match = RegExp(r'^\!\[(.*?)\]\((.*?)\)$').firstMatch(trimmed);
+        if (match != null) {
+          final alt = match.group(1) ?? '';
+          final url = match.group(2) ?? '';
+          buffer.writeln('<p class="txt bl center"><img src="${_escapeHtml(url)}" alt="${_escapeHtml(alt)}" style="max-width: 100%; height: auto;"/></p>');
+        }
+        continue;
+      }
+
       // Regular paragraph
       if (inList) {
         buffer.writeln('</$currentListTag>');
@@ -138,13 +196,23 @@ class MarkdownParser {
     if (inList) {
       buffer.writeln('</$currentListTag>');
     }
+    if (inTable) {
+      buffer.writeln('</tbody>');
+      buffer.writeln('</table>');
+    }
 
     return buffer.toString();
   }
 
-  /// Process inline markdown (bold, italic, links)
+  /// Process inline markdown (bold, italic, links, images)
   static String _processInlineMarkdown(String text) {
     String result = _escapeHtml(text);
+
+    // Images (inline) ![alt](url) - process before links
+    result = result.replaceAllMapped(
+      RegExp(r'!\[([^\]]*)\]\(([^\)]+)\)'),
+      (match) => '<img src="${_escapeHtml(match.group(2)!)}" alt="${_escapeHtml(match.group(1)!)}" style="max-width: 100%; height: auto;"/>',
+    );
 
     // Bold (**text** or __text__)
     result = result.replaceAllMapped(
@@ -181,11 +249,13 @@ class MarkdownParser {
     return result;
   }
 
-  /// Check if line is a special markdown line (heading, list, etc.)
+  /// Check if line is a special markdown line (heading, list, table, image, etc.)
   static bool _isSpecialLine(String line) {
     return line.startsWith('#') ||
         line.startsWith('- ') ||
         line.startsWith('* ') ||
+        line.startsWith('|') ||
+        line.startsWith('!') ||
         RegExp(r'^\d+\.\s').hasMatch(line);
   }
 

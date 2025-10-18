@@ -66,7 +66,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
           '미리보기',
