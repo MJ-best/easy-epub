@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="easypub"
+        android:label="Easy Epub - 쉬운 전자책 만들기"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

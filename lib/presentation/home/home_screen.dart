@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         titleSpacing: 20,
         title: Text(
-          'EasyPub',
+          'Easy Epub',
           style: theme.textTheme.displaySmall?.copyWith(
             color: theme.colorScheme.onSurface,
             letterSpacing: -0.3,
@@ -144,6 +144,9 @@ class HomeScreen extends StatelessWidget {
                       );
                     }
                   },
+                  onSave: ebook.epubFilePath != null
+                      ? () => _saveToDownloads(context, ebook.epubFilePath!)
+                      : null,
                   onShare: ebook.epubFilePath != null
                       ? () => _shareEpub(context, ebook.epubFilePath!)
                       : null,
@@ -225,6 +228,40 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _saveToDownloads(BuildContext context, String epubPath) async {
+    try {
+      final file = File(epubPath);
+      if (!await file.exists()) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('파일을 찾을 수 없습니다')),
+          );
+        }
+        return;
+      }
+
+      // 파일이 이미 앱의 문서 디렉토리에 저장되어 있음을 알림
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('파일이 저장되었습니다\n${epubPath}'),
+            duration: const Duration(seconds: 3),
+            action: SnackBarAction(
+              label: '공유',
+              onPressed: () => _shareEpub(context, epubPath),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('저장 실패: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
   Future<void> _shareEpub(BuildContext context, String epubPath) async {
     try {
       final file = File(epubPath);
@@ -284,6 +321,7 @@ class _EbookListItem extends StatelessWidget {
   final DateTime modifiedDate;
   final String? epubFilePath;
   final VoidCallback onTap;
+  final VoidCallback? onSave;
   final VoidCallback? onShare;
   final VoidCallback onDelete;
 
@@ -293,6 +331,7 @@ class _EbookListItem extends StatelessWidget {
     required this.modifiedDate,
     this.epubFilePath,
     required this.onTap,
+    this.onSave,
     this.onShare,
     required this.onDelete,
   });
@@ -360,6 +399,17 @@ class _EbookListItem extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (onSave != null)
+                    IconButton(
+                      iconSize: 24,
+                      visualDensity: VisualDensity.compact,
+                      icon: Icon(
+                        Icons.file_download_outlined,
+                        color: theme.colorScheme.primary,
+                      ),
+                      onPressed: onSave,
+                      tooltip: '저장',
+                    ),
                   if (onShare != null)
                     IconButton(
                       iconSize: 24,

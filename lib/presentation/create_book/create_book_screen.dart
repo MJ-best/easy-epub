@@ -315,7 +315,7 @@ class _ContentEditorState extends State<_ContentEditor> {
                   onListPressed: () => _insertMarkdown('- ', needsNewline: true),
                   onTablePressed: () => _insertMarkdown('\n| 헤더1 | 헤더2 |\n|-------|-------|\n| 내용1 | 내용2 |\n'),
                   onImagePressed: () => _insertMarkdown('![이미지 설명](이미지_URL)'),
-                  onCenterPressed: () => _insertMarkdown('<p style="text-align: center;">', suffix: '</p>'),
+                  onCenterPressed: () => _insertMarkdown('<p class="center">', suffix: '</p>'),
                 ),
               ],
             ),
@@ -450,7 +450,7 @@ class _PreviewPanel extends StatelessWidget {
     final theme = Theme.of(context);
     final surfaceColor = theme.colorScheme.surface;
 
-    if (viewModel.content.isEmpty) {
+    if (viewModel.content.isEmpty && viewModel.coverImagePath == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -482,6 +482,7 @@ class _PreviewPanel extends StatelessWidget {
 
     final html = MarkdownParser.parseToHtml(viewModel.content);
     final templateStyles = _getTemplateStyles(viewModel.selectedTemplate, theme);
+    final tocEntries = MarkdownParser.extractTableOfContents(viewModel.content);
 
     return Container(
       color: surfaceColor,
@@ -529,9 +530,62 @@ class _PreviewPanel extends StatelessWidget {
               color: theme.brightness == Brightness.dark ? const Color(0xFF111111) : Colors.white,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
-                child: Html(
-                  data: html,
-                  style: templateStyles,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Cover image preview
+                    if (viewModel.coverImagePath != null) ...[
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            File(viewModel.coverImagePath!),
+                            width: 240,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                    // Table of Contents
+                    if (tocEntries.isNotEmpty) ...[
+                      Text(
+                        '목차',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ...tocEntries.map((entry) {
+                        final indent = (entry.level - 1) * 16.0;
+                        return Padding(
+                          padding: EdgeInsets.only(left: indent, bottom: 8),
+                          child: Text(
+                            entry.title,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontSize: entry.level == 1 ? 16 : (entry.level == 2 ? 15 : 14),
+                              fontWeight: entry.level == 1 ? FontWeight.w600 : FontWeight.normal,
+                              color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 32),
+                      Divider(
+                        color: theme.brightness == Brightness.dark
+                            ? Colors.white24
+                            : Colors.black12,
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                    // Content HTML
+                    if (viewModel.content.isNotEmpty)
+                      Html(
+                        data: html,
+                        style: templateStyles,
+                      ),
+                  ],
                 ),
               ),
             ),
@@ -945,6 +999,19 @@ class _BottomButton extends StatelessWidget {
           content: const Text('전자책이 성공적으로 생성되었습니다.'),
           actions: [
             if (epubPath != null) ...[
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context, false);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('파일이 저장되었습니다\n$epubPath'),
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.file_download),
+                label: const Text('저장 위치'),
+              ),
               TextButton.icon(
                 onPressed: () async {
                   await _shareEpub(context, epubPath);

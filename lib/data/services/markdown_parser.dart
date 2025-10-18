@@ -182,7 +182,7 @@ class MarkdownParser {
       // Check if next line continues paragraph
       if (i < lines.length - 1 && lines[i + 1].trim().isNotEmpty &&
           !_isSpecialLine(lines[i + 1].trim())) {
-        buffer.write(' ');
+        buffer.write('<br/>');
       } else {
         buffer.writeln('</p>');
         inParagraph = false;
@@ -268,4 +268,46 @@ class MarkdownParser {
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&apos;');
   }
+
+  /// Extract table of contents from markdown headings
+  static List<TocEntry> extractTableOfContents(String markdown) {
+    final entries = <TocEntry>[];
+    final lines = markdown.split('\n');
+
+    for (final line in lines) {
+      final trimmed = line.trim();
+
+      // H1
+      if (trimmed.startsWith('# ') && !trimmed.startsWith('## ')) {
+        entries.add(TocEntry(
+          level: 1,
+          title: trimmed.substring(2).trim(),
+        ));
+      }
+      // H2
+      else if (trimmed.startsWith('## ') && !trimmed.startsWith('### ')) {
+        entries.add(TocEntry(
+          level: 2,
+          title: trimmed.substring(3).trim(),
+        ));
+      }
+      // H3
+      else if (trimmed.startsWith('### ')) {
+        entries.add(TocEntry(
+          level: 3,
+          title: trimmed.substring(4).trim(),
+        ));
+      }
+    }
+
+    return entries;
+  }
+}
+
+/// Table of contents entry
+class TocEntry {
+  final int level;
+  final String title;
+
+  TocEntry({required this.level, required this.title});
 }
