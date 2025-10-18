@@ -20,13 +20,32 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        titleSpacing: 20,
-        title: Text(
-          'Easy Epub',
-          style: theme.textTheme.displaySmall?.copyWith(
-            color: theme.colorScheme.onSurface,
-            letterSpacing: -0.3,
-          ),
+        titleSpacing: 12,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Image.asset(
+                'assets/icon/icon.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Easy Epub',
+              style: theme.textTheme.displaySmall?.copyWith(
+                color: theme.colorScheme.onSurface,
+                letterSpacing: -0.3,
+              ),
+            ),
+          ],
         ),
         actions: [
           Consumer<ThemeProvider>(
