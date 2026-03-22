@@ -52,3 +52,6 @@ app.*.map.json
 # Hive
 *.hive
 *.lock
+node_modules/
+playwright-report/
+test-results/
